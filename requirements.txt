@@ -1,0 +1,5 @@
+eyed3
+requests
+PySide6
+mutagen
+pyinstaller
