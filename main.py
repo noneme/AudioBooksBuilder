@@ -103,8 +103,9 @@ class AudioBooksBuilder(QMainWindow):
 		
 		# Компоновщик для формы с метаданными
 		form_layout = QVBoxLayout()
-		labels_texts = ['Название', 'Автор', 'Книга', 'Читает', 'Жанр', 'Цикл']
-		self.line_edits = {text: QLineEdit() for text in labels_texts + ['Книга в цикле', 'Трек №']}
+		labels_texts = ['Название', 'Автор', 'Книга', 'Читает', 'Жанр', 'Цикл', 'Книга в цикле']
+		#self.line_edits = {text: QLineEdit() for text in labels_texts + ['Книга в цикле', 'Трек №']}
+		self.line_edits = {text: QLineEdit() for text in labels_texts}
 		
 		# Автоподстановка автора и чтеца из базы 
 		authors = self.get_authors_from_db()
@@ -135,29 +136,29 @@ class AudioBooksBuilder(QMainWindow):
 				line_edit.setCompleter(self.completer_authors)
 			if label_text == "Читает":
 				line_edit.setCompleter(self.completer_composer)
-			line_edit.setMaximumWidth(250)  # Задаем максимальную ширину для QLineEdit
+			#line_edit.setMaximumWidth(250)  # Задаем максимальную ширину для QLineEdit
 			row_layout.addWidget(label)
 			row_layout.addWidget(line_edit)
 			form_layout.addLayout(row_layout)
 			line_edit.editingFinished.connect(lambda le=line_edit, lt=label_text: self.update_mp3_tag_value(lt, le.text()))
 			
 		# Специальное размещение для 'Диска №' и 'Трека №'
-		special_row_layout = QHBoxLayout()
-		disk_number_label = QLabel('Книга в цикле')
-		track_number_label = QLabel('Трек №')
-		disk_number_edit = self.line_edits['Книга в цикле']
-		track_number_edit = self.line_edits['Трек №']
-		disk_number_edit.setFixedWidth(50)
-		track_number_edit.setFixedWidth(85)
+			#special_row_layout = QHBoxLayout()
+			#disk_number_label = QLabel('Книга в цикле')
+			#track_number_label = QLabel('Трек №')
+			#disk_number_edit = self.line_edits['Книга в цикле']
+			#track_number_edit = self.line_edits['Трек №']
+			#disk_number_edit.setFixedWidth(50)
+			#track_number_edit.setFixedWidth(85)
 		
 		# Добавление виджетов в специальный компоновщик
-		special_row_layout.addWidget(disk_number_label)
-		special_row_layout.addWidget(disk_number_edit)
-		special_row_layout.addWidget(track_number_label)
-		special_row_layout.addWidget(track_number_edit)
+			#special_row_layout.addWidget(disk_number_label)
+			#special_row_layout.addWidget(disk_number_edit)
+			#special_row_layout.addWidget(track_number_label)
+			#special_row_layout.addWidget(track_number_edit)
 		
 		# Добавление специального компоновщика в основную форму
-		form_layout.addLayout(special_row_layout)
+			#form_layout.addLayout(special_row_layout)
 	
 		# Описание
 		description_label = QLabel('Описание')
@@ -563,12 +564,16 @@ class AudioBooksBuilder(QMainWindow):
 					"Автор": "artist",
 					"Читает": "composer",
 					"Жанр": "genre",
-					"Описание": "description"}
+					"Описание": "description",
+					"Цикл": "series",
+					"Книга в цикле": "series_num"
+				}
 				
 			tag_en = tag_mapping.get(tag, tag)
-						
+												
+									
 			# Обновление значения тега в файле
-			if tag_en == "name" or tag_en == "album" or tag_en == "artist" or tag_en == "composer" or tag_en == "genre" or tag_en == "description":
+			if tag_en == "name" or tag_en == "album" or tag_en == "artist" or tag_en == "composer" or tag_en == "genre" or tag_en == "description" or tag_en == "series" or tag_en == "series_num":
 				audio = MP3(first_file_path, ID3=ID3)
 				if audio.tags is None:
 					audio.add_tags()
@@ -593,7 +598,7 @@ class AudioBooksBuilder(QMainWindow):
 					
 					# Сохраняем изменения
 					audio.save()
-					
+										
 				except error as e:
 					print(f"Ошибка при обновлении тега: {e}")
 				
